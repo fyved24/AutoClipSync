@@ -65,6 +65,21 @@ func main() {
 			}
 		}
 	}()
+	go func() {
+		pre := ""
+		for  {
+			content, err := clipboard.ReadAll()
+			if err != nil {
+				return
+			}
+			if content != pre {
+				pre = content
+				fmt.Printf("read %s from clipboard\n", content)
+				socket.WriteMessage(websocket.TextMessage, []byte(content))
+			}
+
+		}
+	}()
 	for {
 		select {
 		case <-done:
