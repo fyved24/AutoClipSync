@@ -5,6 +5,7 @@ import (
 	"AutoClipSync/util"
 	"flag"
 	"fmt"
+	"github.com/atotto/clipboard"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
@@ -20,6 +21,7 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 	isServerStared :=  make(chan int)
+	// 没有开启服务的话，开启一个服务
 	if util.PortInUse(9928) == -1{
 		go func() {
 			server.StartWsServer(*addr, isServerStared)
@@ -43,6 +45,7 @@ func main() {
 		for {
 			_, message, err := socket.ReadMessage()
 			fmt.Println(string(message))
+			clipboard.WriteAll(string(message))
 			if err != nil {
 				log.Fatal(err)
 			}
